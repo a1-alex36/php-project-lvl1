@@ -6,5 +6,10 @@
             "email": "a1-alex36@yandex.ru"
         }
     ],
+    "description": "test2",
+    "license": "MIT",
+    "bin": [
+        "bin/brain-games"
+    ],
     "require": {}
 }
