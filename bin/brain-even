@@ -1,10 +1,20 @@
 #!/usr/bin/env php
 <?php
 // import либы эвент
-// автозагрузка фунций
-//вызов метода запуск игры. Или задать вопрос
+// автозагрузка функций.
 
-echo "even";
+use function Brain\Even\Even\Run;
+
+$autoloadPath1 = __DIR__ . '/../../../autoload.php';
+$autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($autoloadPath1)) {
+    require_once $autoloadPath1;
+} else {
+    require_once $autoloadPath2;
+}
+
+//вызов метода запуск игры. Или задать вопрос
+Run();
 
 // это консольный скрипт. Только вызов модуля
 //
