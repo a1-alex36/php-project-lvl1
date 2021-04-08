@@ -10,7 +10,8 @@
     "license": "MIT",
     "bin": [
         "bin/brain-games",
-        "bin/brain-even"
+        "bin/brain-even",
+        "bin/brain-calc"
     ],
     "scripts": {
         "phpcs":  [
@@ -23,7 +24,9 @@
         },
         "files": [
             "src/Cli.php",
-            "src/even/Even.php"]
+            "src/Games/Even.php",
+            "src/Games/Calc.php"
+        ]
     },
     "require": {
         "wp-cli/php-cli-tools": "^0.11.12"

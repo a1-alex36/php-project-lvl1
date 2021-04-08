@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+// import либы эвент
+// автозагрузка функций.
+
+use function Brain\Calc\Games\Calc\Run;
+
+$autoloadPath1 = __DIR__ . '/../../../autoload.php';
+$autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($autoloadPath1)) {
+    require_once $autoloadPath1;
+} else {
+    require_once $autoloadPath2;
+}
+
+//вызов метода запуск игры. Или задать вопрос
+Run();

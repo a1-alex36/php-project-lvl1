@@ -3,7 +3,7 @@
 // import либы эвент
 // автозагрузка функций.
 
-use function Brain\Even\Even\Run;
+use function Brain\Even\Games\Even\Run;
 
 $autoloadPath1 = __DIR__ . '/../../../autoload.php';
 $autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
