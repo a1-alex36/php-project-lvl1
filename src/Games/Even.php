@@ -2,117 +2,48 @@
 
 namespace Brain\Even\Games\Even;
 
-use function cli\line;
-use function cli\prompt;
+use function Brain\Games\Engine\goGame;
+
+//необщая
+// как сделать общей. - тут оставить запонение своими параметрами
+// в конце вызвать РАН из Енджайна с передачей этих вах параметров.
+/* какой метод формирует задачу, вычисляет правильный ответ,
+валижация ввода, проверяет правильность ответа, выводит ответ
+*/
 
 function Run()
 {
-    echo "Run even";
-    define("NUM_QUESTIONS", 3);
+    define("NUM_QUESTIONS", 4);
     define("RULE", 'Answer "yes" if the number is even, otherwise answer "no".');
 
-    $countRightAnswer = 0;
-    $Questions = [
-       // "even" => getNum()
-    ];
-
-    $userName = showWelcome();
-    showRules(RULE);
-    while ($countRightAnswer < NUM_QUESTIONS) {
-        $Questions["even"] = getNum();
-        $userAnswer = showQuestion($Questions["even"]);
-        if (!checkAnswer($userAnswer)) {
-            line('Answer bad');
-            exit;
-        }
-        $rightAnswer = rightAnswer($Questions["even"]);
-        if (!checkResult($userAnswer, $rightAnswer)) {
-            showResult($userAnswer, $userName, $rightAnswer, 'wrong');
-            exit;
-        } else {
-            showResult($userAnswer, $userName, $rightAnswer, 'right');
-            $countRightAnswer++;
-            if ($countRightAnswer === NUM_QUESTIONS) {
-                showResult($userAnswer, $userName, $rightAnswer, 'end');
-            }
-        }
-    }
+    //$conf = ["even" => ["Question" => "\Brain\Even\Games\Even\getNum",
+    // можно добавить для всех __NAMESPACE__ пройдясь мапом по значениям
+    $conf = ["even" => ["Question" => __NAMESPACE__ . '\getNum',
+                        "checkAnswer" => __NAMESPACE__ . '\validate',
+                        "rightAnswer" => __NAMESPACE__ . '\isEven',
+                        "num_questions" => NUM_QUESTIONS,
+                        "rule" => RULE]];
+    return goGame($conf["even"]);
 }
 
-function showWelcome(): string
-{
-    line('Welcome to the Brain Games!');
-    $userName = prompt('May I have your name?');
-    line('Hello, %s', $userName);
-    return $userName;
-}
-
-function showRules($rule)
-{
-    line($rule);
-}
-
+//не общая. в евен
 function getNum(): int
 {
     return rand(1, 100);
 }
 
-function isEven(int $num): bool
+//не общая. в евен
+function isEven(int $num): string
 {
-    if ($num % 2 > 0) {
+    /*if ($num % 2 > 0) {
         return false;
     }
-    return true;
+    return true;*/
+    return ($num % 2) > 0 ? "no" : "yes";
 }
 
-//ответ юзера, правильный ответ,
-function checkAnswer($userAnswer): bool
-{
-    return validate($userAnswer);
-}
-
-
+//общая. правила валидации надо передавать
 function validate(string $Answer): bool
 {
     return $Answer == "no" || $Answer == "yes";
-}
-
-function rightAnswer($Questions): string
-{
-    return isEven($Questions) ? "yes" : "no";
-}
-
-function showQuestion($textQuestion): string
-{
-    return prompt('Question:', $textQuestion);
-}
-
-/*
-function generateNum(): int
-{
-    return rand(1, 100);
-}*/
-
-function checkResult($userAnswer, $correctAnswer): bool
-{
-    return $userAnswer === $correctAnswer;
-}
-
-function showResult($userAnswer, $userName, $correctAnswer, $status = null)
-{
-    switch ($status) {
-        case "wrong":
-            line("'%s' is wrong answer ;(. Correct answer was '%s'.", $userAnswer, $correctAnswer);
-            line("Let's try again, %s!", $userName);
-            break;
-        case "right":
-            line("Your answer: '%s'", $userAnswer);
-            line("Correct!");
-            break;
-        case "end":
-            line("Congratulations, '%s'", $userName);
-            break;
-        default:
-            break;
-    }
 }

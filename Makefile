@@ -10,3 +10,5 @@ lint:
 	composer run-script phpcs -- --standard=PSR12 src bin
 brain-calc:
 	./bin/brain-calc
+brain-gcd:
+	./bin/brain-gcd
