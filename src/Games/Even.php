@@ -2,47 +2,39 @@
 
 namespace Brain\Even\Games\Even;
 
-use function Brain\Games\Engine\goGame;
-
-//необщая
-// как сделать общей. - тут оставить запонение своими параметрами
-// в конце вызвать РАН из Енджайна с передачей этих вах параметров.
-/* какой метод формирует задачу, вычисляет правильный ответ,
-валижация ввода, проверяет правильность ответа, выводит ответ
-*/
+use function Brain\Games\Engine\playGame;
 
 function Run()
 {
-    define("NUM_QUESTIONS", 4);
-    define("RULE", 'Answer "yes" if the number is even, otherwise answer "no".');
+    define("COUNT_ROUNDS", 4);
+    define("RULE_GAME", "Answer 'yes' if the number is even, otherwise answer 'no'. Max " . COUNT_ROUNDS . " rounds");
 
     //$conf = ["even" => ["Question" => "\Brain\Even\Games\Even\getNum",
     // можно добавить для всех __NAMESPACE__ пройдясь мапом по значениям
-    $conf = ["even" => ["Question" => __NAMESPACE__ . '\getNum',
-                        "checkAnswer" => __NAMESPACE__ . '\validate',
-                        "rightAnswer" => __NAMESPACE__ . '\isEven',
-                        "num_questions" => NUM_QUESTIONS,
-                        "rule" => RULE]];
-    return goGame($conf["even"]);
+    $conf = ["even" => ["checkAnswer" => __NAMESPACE__ . '\validate',
+                        "countRounds" => COUNT_ROUNDS,
+                        "ruleGame" => RULE_GAME,
+                        "getRound" => __NAMESPACE__ . '\getRound']];
+    return playGame($conf["even"]);
 }
 
-//не общая. в евен
+function getRound(): array
+{
+    $question = getNum();
+    $rightAnswer = isEven($question) ? "yes" : "no";
+    return [$question, $rightAnswer];
+}
+
 function getNum(): int
 {
     return rand(1, 100);
 }
 
-//не общая. в евен
-function isEven(int $num): string
+function isEven(int $num): bool
 {
-    /*if ($num % 2 > 0) {
-        return false;
-    }
-    return true;*/
-    return ($num % 2) > 0 ? "no" : "yes";
+    return ($num % 2) === 0;
 }
 
-//общая. правила валидации надо передавать
 function validate(string $Answer): bool
 {
     return $Answer == "no" || $Answer == "yes";

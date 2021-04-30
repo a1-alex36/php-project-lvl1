@@ -2,19 +2,18 @@
 
 namespace Brain\Calc\Games\Calc;
 
-use function Brain\Games\Engine\goGame;
+use function Brain\Games\Engine\playGame;
 
 function Run()
 {
-    define("NUM_QUESTIONS", 3);
-    define("RULE", 'What is the result of the expression?');
+    define("COUNT_ROUNDS", 3);
+    define("RULE_GAME", 'What is the result of the expression?');
 
-    $conf = ["calc" => ["Question" => __NAMESPACE__ . '\QuestionCalc',
-                        "checkAnswer" => __NAMESPACE__ . '\validate',
-                        "rightAnswer" => __NAMESPACE__ . '\evalExpression',
-                        "num_questions" => NUM_QUESTIONS,
-                        "rule" => RULE]];
-    return goGame($conf["calc"]);
+    $conf = ["calc" => ["checkAnswer" => __NAMESPACE__ . '\validate',
+                        "countRounds" => COUNT_ROUNDS,
+                        "ruleGame" => RULE_GAME,
+                        "getRound" => __NAMESPACE__ . '\getRound']];
+    return playGame($conf["calc"]);
     /*
     $res = QuestionCalc();
     echo $res . PHP_EOL;
@@ -24,13 +23,22 @@ function Run()
     */
 }
 
+function getRound(): array
+{
+    $question = QuestionCalc();
+    //$rightAnswer = evalExpression($question);
+    //return [$question, $rightAnswer];
+    return [$question, evalExpression($question)];
+}
+
+
+//generateExpression
 //операции: +, - и *.
 // числа случайно
 //$Questions["even"]
 function QuestionCalc(): string
 {
     $operations = [" + "," - "," * "];
-    rand(1, 100);
     return rand(1, 100) . array_rand(array_flip($operations), 1) . rand(1, 100);
 }
 

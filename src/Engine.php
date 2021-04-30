@@ -6,101 +6,86 @@ use function cli\err;
 use function cli\line;
 use function cli\prompt;
 
-function goGame($config)
+//getRound  ruleGame checkAnswer  -countRounds
+function playGame($config)
 {
-    $userName = showWelcome();
-    showRules($config["rule"]);
+    showWelcome();
+    $userName = getUserName();
+    showRules($config["ruleGame"]);
 
-    //var_dump($config);
-
-    $countRightAnswer = 0;
-
-    while ($countRightAnswer < $config["num_questions"]) {
-        $Question = $config["Question"]();
+    for ($countRightRounds = 0; $countRightRounds < $config["countRounds"]; $countRightRounds++) {
+        [$Question, $rightAnswer] = $config["getRound"]();
         $userAnswer = showQuestion($Question);
+
         if (!checkAnswer($userAnswer, $config["checkAnswer"])) {
             err('Error answer format!');
             exit;
         }
-        $rightAnswer = rightAnswer($Question, $config["rightAnswer"]);
         if (!checkResult($userAnswer, $rightAnswer)) {
-            showResult($userAnswer, $userName, $rightAnswer, 'wrong');
+            showResult($userAnswer, $userName, $rightAnswer, 'WrongAnswer');
             exit;
-        } else {
-            showResult($userAnswer, $userName, $rightAnswer, 'right');
-            $countRightAnswer++;
-            if ($countRightAnswer === $config["num_questions"]) {
-                showResult($userAnswer, $userName, $rightAnswer, 'end');
-            }
+        }
+        showResult($userAnswer, $userName, $rightAnswer, 'RightAnswer');
+        if ($countRightRounds === $config["countRounds"]) {
+            showResult($userAnswer, $userName, $rightAnswer, 'EndGame');
         }
     }
-
-    //$config["Question"]();
-    //  такая штука для того чтобы вызвать ф-цию из другого неймспейса
-    // их много и они динамечески передаются. все подключить вроде не красиво
-    //$name = '\\Brain\\Even\\Games\\Even\\' . $config["Question"];
-
-    //$name = $config["Question"];
-    //echo $name();
-    //exit;
 }
 
-//общая в энджайн
-function showWelcome(): string
+function showWelcome()
 {
     line('Welcome to the Brain Games!');
+}
+
+function getUserName(): string
+{
     $userName = prompt('May I have your name?');
     line('Hello, %s', $userName);
     return $userName;
 }
 
-//общая
 function showRules($rule)
 {
     line($rule);
 }
 
-//общая. что выводим надо передавать
-function showResult($userAnswer, $userName, $correctAnswer, $status = null)
+function showResult($userAnswer, $userName, $correctAnswer, $ResultType = null)
 {
-    switch ($status) {
-        case "wrong":
+    switch ($ResultType) {
+        case "WrongAnswer":
             line("'%s' is wrong answer ;(. Correct answer was '%s'.", $userAnswer, $correctAnswer);
             line("Let's try again, %s!", $userName);
             break;
-        case "right":
+        case "RightAnswer":
             line("Correct!");
             break;
-        case "end":
+        case "EndGame":
             line("Congratulations, %s", $userName);
             break;
         default:
+            //исключеие с выбросом значения ResultType
             break;
     }
 }
 
-//общая. правила валидации надо передавать
-//ответ юзера, правильный ответ,
 function checkAnswer($userAnswer, $checkFunc): bool
 {
     return $checkFunc($userAnswer);
 }
 
-//общая. правила вычисления надо передавать
-function rightAnswer($Questions, $rightEvalFunc): string
+//не юзается. общая. правила вычисления надо передавать
+function getRightAnswer($Questions, $rightEvalFunc): string
 {
     return $rightEvalFunc($Questions);
 }
 
-//общая. правила вычисления надо передавать
 function showQuestion($textQuestion): string
 {
     line("Question: %s", $textQuestion);
     return prompt('Your answer');
 }
 
-//общая. правила вычисления надо передавать
 function checkResult($userAnswer, $correctAnswer): bool
 {
-    return $userAnswer === $correctAnswer;
+    return $userAnswer === (string)$correctAnswer;
 }

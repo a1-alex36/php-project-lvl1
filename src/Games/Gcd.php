@@ -2,21 +2,31 @@
 
 namespace Brain\Gcd\Games\Gcd;
 
-use function Brain\Games\Engine\goGame;
+use function Brain\Games\Engine\playGame;
 
 function Run()
 {
-    define("NUM_QUESTIONS", 3);
-    define("RULE", 'Find the greatest common divisor of given numbers.');
+    define("COUNT_ROUNDS", 3);
+    define("RULE_GAME", 'Find the greatest common divisor of given numbers.');
 
-    $conf = ["gcd" => ["Question" => __NAMESPACE__ . '\QuestionGcd',
-        "checkAnswer" => __NAMESPACE__ . '\validate',
-        "rightAnswer" => __NAMESPACE__ . '\evalExpression',
-        "num_questions" => NUM_QUESTIONS,
-        "rule" => RULE]];
-    return goGame($conf["gcd"]);
+    // разделить на подмассив конфига и подмассив методов. так легко добавлять и не надо править вызов
+    $conf = ["gcd" =>
+                ["checkAnswer" => __NAMESPACE__ . '\validate',
+                "countRounds" => COUNT_ROUNDS,
+                "ruleGame" => RULE_GAME,
+                "getRound" => __NAMESPACE__ . '\getRound']];
+    return playGame($conf["gcd"]);
 }
-function QuestionGcd()
+
+function getRound(): array
+{
+    $question = QuestionGcd();
+    //$rightAnswer = evalExpression($question);
+    //return [$question, $rightAnswer];
+    return [$question, evalExpression($question)];
+}
+
+function QuestionGcd(): string
 {
     return rand(1, 100) . " " . rand(1, 100);
 }
@@ -31,13 +41,3 @@ function evalExpression($expression)
     $pair = explode(" ", $expression);
     return gmp_gcd($pair[0], $pair[1]);
 }
-/*
- * установка ext-gmp
- * добавить в композер json. секция require - "ext-gmp": "*"
- * сделать композер инсталл, композер вилидейт.
- * в php.ini нужной версии пыха раскоментить. extension=gmp, сохранить файл
- * сделать композер инсталл
- * ошибка в композере что нет в сситеме gmp расширения
- * ставим в ситему sudo apt-get install php7.4-gmp
- * * сделать композер инсталл, композер вилидейт.
- * */
